@@ -1,11 +1,10 @@
 import discord
-import asyncio
 import info
-from project_scrapper import send as project_send
-from bachelor_scrapper import send as bachelor_send
-from notice_scrapper import send as notice_send
-from job_scrapper import send as job_send
-from cse_scrapper import send as cse_send
+from scrappers.project_scrapper import send as project_send
+from scrappers.bachelor_scrapper import send as bachelor_send
+from scrappers.notice_scrapper import send as notice_send
+from scrappers.job_scrapper import send as job_send
+from scrappers.cse_scrapper import send as cse_send
 
 TOKEN = info.get_token()
 HELP = "[명령어 모음]" \
