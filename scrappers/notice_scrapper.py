@@ -3,11 +3,13 @@ import info
 from bs4 import BeautifulSoup
 
 URL = "https://computer.cnu.ac.kr/computer/notice/notice.do"
-line = "------------------------------------------------------------------------------------------------"
-last_update = info.get_last_update()
+line = "---------------------------------------------------------------------------------------------------"
+end_line = "--------------------------------------------done!-------------------------------------------------"
 
 
 def recent_info():
+    last_update = info.get_last_update()
+
     result = requests.get(URL)
     soup = BeautifulSoup(result.text, "html.parser")
     table = soup.find("table", {"class": "board-table"})
@@ -35,12 +37,12 @@ async def send(message):
     n_channel = message.channel
     information = recent_info()
     if len(information) == 0:
-        await n_channel.send(f'▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒[일반소식]▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n{line}')
-        await n_channel.send(f"새로 올라온 공지가 없습니다.\n{line}")
+        await n_channel.send(f':thumbsup:\n▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒[일반소식]▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n{line}')
+        await n_channel.send(f"새로 올라온 공지가 없습니다.\n{end_line}")
     else:
-        await n_channel.send('#####[일반소식]#####')
+        await n_channel.send(':pinching_hand: :eyes: :ok_hand: \n▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒[일반소식]▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒')
         for n_info in information:
             await n_channel.send(
                 f"{line}\n[제목] : {n_info['title']}\n[날짜] : {n_info['date']}\n[링크] : {n_info['link']}\n")
 
-        await n_channel.send(line)
+        await n_channel.send(end_line)

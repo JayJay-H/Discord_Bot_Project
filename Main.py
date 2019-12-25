@@ -14,7 +14,6 @@ HELP = "[명령어 모음]" \
         "\n[$showp] --> 사업단소식" \
         "\n[$showj] --> 취업정보" \
         "\n[$showc] --> 우리학부 News"
-line = "------------------------------------------------------------------------------------------------"
 client = discord.Client()
 
 
@@ -31,7 +30,7 @@ async def on_message(message):
     if message.content.startswith('$help'):
         h_channel = message.channel
         last_update = info.get_last_update()
-        date = f"20{last_update[0]}년 {last_update[1]}월 {last_update[2]}일"
+        date = f"20{last_update[0]}년 {last_update[1]}월 {int(last_update[2]) + 1}일"
         await h_channel.send(HELP)
         await h_channel.send(f'마지막 업데이트 날짜 : {date}')
 
