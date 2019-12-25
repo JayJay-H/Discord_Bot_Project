@@ -1,7 +1,10 @@
 import requests
+import info
 from bs4 import BeautifulSoup
 
 URL = "https://computer.cnu.ac.kr/computer/notice/project.do"
+line = "------------------------------------------------------------------------------------------------"
+last_update = info.get_last_update()
 
 
 def recent_info():
@@ -12,18 +15,31 @@ def recent_info():
     data = []
 
     nums = table.find_all("td", {"class": "b-num-box"})
-    latest_num = nums[0].get_text(strip=True)
-
     titles = table.find_all("div", {"class": "b-title-box"})
-    latest_title = titles[0].find("a").get_text(strip=True)
-
     dates = table.find_all("div", {"class": "b-m-con"})
-    latest_date = dates[0].find("span", {"class": "b-date"}).get_text(strip=True)
 
-    link = titles[0].find('a')["href"]
-    latest_link = f"{URL}{link}"
+    for n, t, d in zip(nums, titles, dates):
+        date = d.find('span', {'class': 'b-date'}).get_text(strip=True)
+        check = info.check(last_update, date)
+        if check:
+            num = n.get_text(strip=True)
+            title = t.find("a").get_text(strip=True)
+            link = URL+t.find('a')['href']
 
-    result = requests.get(latest_link)
-    soup = BeautifulSoup(result.text, "html.parser")
-    content = soup.find("pre", {"class": "pre"}).get_text(strip=True)
-    return {"index": latest_num, "date": latest_date, "title": latest_date, "content": content}
+            data.append({'index': num, 'title': title, 'date': date, 'link': link})
+
+    return data
+
+
+async def send(message):
+    p_channel = message.channel
+    information = recent_info()
+    if len(information) == 0:
+        await p_channel.send(f'▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒[사업단소식]▒▒▒▒▒▒▒▒▒▒▒▒▒▒\n{line}')
+        await p_channel.send(f"새로 올라온 공지가 없습니다.\n{line}")
+    else:
+        await p_channel.send('#####[사업단소식]#####')
+        for p_info in information:
+            await p_channel.send(
+                f"{line}\n[제목] : {p_info['title']}\n[날짜] : {p_info['date']}\n[링크] : {p_info['link']}\n")
+        await p_channel.send(line)
